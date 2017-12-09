@@ -10,7 +10,7 @@ from SubRipSpec import *
 class SubRipConverter:
 
     def __init__(self):
-        self.working_directory = './resources/'
+        self.working_directory = './'
         self.output_format = OutputFormats.PLAINTEXT
         self.sentences_per_paragraph = 5
         self.output_file_name = 'result'
@@ -24,6 +24,9 @@ class SubRipConverter:
     def sort_if_possible(collection):
         potential_delimiters = ['-', ' ']
         for delimiter in potential_delimiters:
+            if collection is None or len(collection) == 0:
+                print "No files found in specified location, exiting"
+                exit(1)
             test = collection[0].split(delimiter)[0]
             if test.strip().isdigit():
                 collection.sort(key=lambda fn: int(fn.split(delimiter)[0]))
@@ -50,50 +53,6 @@ class SubRipConverter:
                 if is_text(line):
                     content_lines.append(line.strip())
         return content_lines
-
-    @staticmethod
-    def process_html(line_list, paragraph_size):
-        header = '<!doctype html>' + os.linesep + '<html><head></head><body>'
-        footer = '</body></html>'
-        body = ''
-        sentence_count = 1
-        is_first = True
-        current_sentence = ''
-
-        for line in line_list:
-
-            if line.startswith('\0'):
-                if not body.strip().endswith('</p>') and len(body) > 0:
-                    body += '</p>' + os.linesep
-                body += os.linesep + os.linesep
-                sentence_count = 0
-                is_first = True
-                current_sentence = ''
-                body += '<h3>' + line[1:] + '</h3>' + os.linesep
-                body += '<p>' + os.linesep
-                continue
-
-            line = line.strip()
-
-            if is_first:
-                line = line.capitalize()
-                is_first = False
-
-            current_sentence += ' ' + line
-
-            if sentence_count >= paragraph_size and not current_sentence.strip().startswith('And'):
-                sentence_count = 0
-                body += '</p>' + os.linesep + '<p>'
-
-            if line.endswith(tuple(['.', '!', '?'])):
-                body += current_sentence
-                current_sentence = ''
-                sentence_count += 1
-                is_first = True
-
-        if not body.strip().endswith('</p>'):
-            body += '</p>' + os.linesep
-        return header + body + footer
 
     @staticmethod
     def process_text(line_list, paragraph_size):
@@ -156,15 +115,35 @@ class SubRipConverter:
         start_time = datetime.datetime.now()
         import getopt
         options, values = getopt.getopt(args, 'd:f:o:')
+        options_flag = 0
+
         for opt, val in options:
             if opt == '-d':
                 if not val.endswith('/'):
                     val += '/'
                 self.working_directory = val
+                options_flag += 1
             elif opt == '-f':
                 self.output_format = OutputFormats.from_string(val)
+                options_flag += 2
             elif opt == '-o':
                 self.output_file_name = val
+                options_flag += 4
+
+        exit_early = False
+
+        if not options_flag & 1:
+            print "Missing working directory option (-d <working directory>)"
+            exit_early = True
+        if not options_flag & 2:
+            print "Missing format option (-f [txt|html|pdf])"
+            exit_early = True
+        if not options_flag & 4:
+            print "Missing output file name option (-o <name>)"
+            exit_early = True
+
+        if exit_early:
+            exit(options_flag)
 
         file_list = self.get_file_list()
         file_list = self.sort_if_possible(file_list)
@@ -172,7 +151,7 @@ class SubRipConverter:
         if self.output_format == OutputFormats.PLAINTEXT:
             content = self.process_text(content, self.sentences_per_paragraph)
         elif self.output_format in [OutputFormats.HTML, OutputFormats.PDF]:
-            content = self.process_html(content, self.sentences_per_paragraph)
+            content = process_html(content, self.sentences_per_paragraph)
         elif self.output_format is None:
             print "No valid output format specified, exiting"
             sys.exit(1)
@@ -181,7 +160,52 @@ class SubRipConverter:
         end_time = datetime.datetime.now()
 
         print 'Processed {0} files in {1}ms{2}Output written to {3}'\
-            .format(len(file_list), (end_time - start_time).microseconds/1000, os.linesep, self.output_file_name)
+            .format(len(file_list), (end_time - start_time).microseconds/1000,
+                    os.linesep, self.output_file_name)
+
+
+def process_html(line_list, paragraph_size):
+    header = '<!doctype html>' + os.linesep + '<html><head></head><body>'
+    footer = '</body></html>'
+    body = ''
+    sentence_count = 1
+    is_first = True
+    current_sentence = ''
+
+    for line in line_list:
+
+        if line.startswith('\0'):
+            if not body.strip().endswith('</p>') and len(body) > 0:
+                body += '</p>' + os.linesep
+            body += os.linesep + os.linesep
+            sentence_count = 0
+            is_first = True
+            current_sentence = ''
+            body += '<h3>' + line[1:] + '</h3>' + os.linesep
+            body += '<p>' + os.linesep
+            continue
+
+        line = line.strip()
+
+        if is_first:
+            line = line.capitalize()
+            is_first = False
+
+        current_sentence += ' ' + line
+
+        if sentence_count >= paragraph_size and not current_sentence.strip().startswith('And'):
+            sentence_count = 0
+            body += '</p>' + os.linesep + '<p>'
+
+        if line.endswith(tuple(['.', '!', '?'])):
+            body += current_sentence
+            current_sentence = ''
+            sentence_count += 1
+            is_first = True
+
+    if not body.strip().endswith('</p>'):
+        body += '</p>' + os.linesep
+    return header + body + footer
 
 
 if __name__ == "__main__":

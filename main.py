@@ -13,7 +13,7 @@ class SubRipConverter:
         self.working_directory = './'
         self.output_format = OutputFormats.PLAINTEXT
         self.sentences_per_paragraph = 5
-        self.output_file_name = 'result'
+        self.output_file_name = 'output'
 
     def get_file_list(self):
         files = os.listdir(self.working_directory)
@@ -130,20 +130,15 @@ class SubRipConverter:
                 self.output_file_name = val
                 options_flag += 4
 
-        exit_early = False
-
         if not options_flag & 1:
-            print "Missing working directory option (-d <working directory>)"
-            exit_early = True
+            print "Missing working directory option (-d <working directory>);"
+            print "  defaulting to current directory"
         if not options_flag & 2:
-            print "Missing format option (-f [txt|html|pdf])"
-            exit_early = True
+            print "Missing format option (-f [txt|html|pdf]);"
+            print "  defaulting to plaintext format"
         if not options_flag & 4:
-            print "Missing output file name option (-o <name>)"
-            exit_early = True
-
-        if exit_early:
-            exit(options_flag)
+            print "Missing output file name option (-o <name>);"
+            print "  defaulting to 'output'"
 
         file_list = self.get_file_list()
         file_list = self.sort_if_possible(file_list)
@@ -161,7 +156,7 @@ class SubRipConverter:
 
         print 'Processed {0} files in {1}ms{2}Output written to {3}'\
             .format(len(file_list), (end_time - start_time).microseconds/1000,
-                    os.linesep, self.output_file_name)
+                    os.linesep, self.working_directory + self.output_file_name)
 
 
 def process_html(line_list, paragraph_size):

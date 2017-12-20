@@ -1,6 +1,13 @@
 # SubRipConverter
 Converts a set of SubRip subtitle files (.srt files) into formatted output. Intended to allow downloading Udacity lecture subtitle sets for offline reading as text.
 
+## Requirements
+
+* Python 2.7 (sorry, I'll fix it up for Python 3 over break)
+* [Wkhtmltopdf](https://wkhtmltopdf.org) for PDF generation 
+* [PDFKit](https://pypi.python.org/pypi/pdfkit) for PDF generation
+* Some SRT files to convert
+
 ## Quick start
 1. Clone the repo
 2. Open the SubRipConverter directory at the command line
@@ -15,7 +22,7 @@ Converts a set of SubRip subtitle files (.srt files) into formatted output. Inte
 
 `-o <filename>` Sets the file name for the resulting output. This will be placed into the working directory. The default is "output." 
 
-## Tested courses
+## Tested Udacity courses
 
 This has been tested on and is known to work for these courses:
 
@@ -28,4 +35,5 @@ If you verify it for other courses, please let me know so I can add to the list.
 
 ## Bugs, problems
 
+### A quick word 
 Please log any issues to the issues board, and especially let me know if the conversion doesn't work properly for a given course.

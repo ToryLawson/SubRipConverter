@@ -63,6 +63,8 @@ class SubRipConverter:
 
         for line in line_list:
 
+            line = line.strip()
+
             if line.startswith('\0'):
                 result += os.linesep + os.linesep
                 sentence_count = 0
@@ -72,7 +74,18 @@ class SubRipConverter:
                 result += os.linesep + '-----------------' + os.linesep
                 continue
 
-            line = line.strip()
+            if line.startswith('>>'):
+                result += current_sentence
+                current_sentence += os.linesep + ">> " + line[2:].strip()[0].upper() + line[2:].strip()[1:]
+                sentence_count = 1
+                if line.endswith(tuple(['.', '!', '?'])):
+                    result += current_sentence
+                    current_sentence = ''
+                    sentence_count += 1
+                    is_first = True
+                else:
+                    is_first = False
+                continue
 
             if is_first:
                 line = line[0].upper() + line[1:]
@@ -92,6 +105,10 @@ class SubRipConverter:
         return result
 
     def store_content(self, content):
+        if self.output_format == OutputFormats.PLAINTEXT:
+            if not self.output_file_name.endswith('.txt'):
+                self.output_file_name += '.txt'
+
         if self.output_format == OutputFormats.HTML:
             if not self.output_file_name.endswith('.html'):
                 self.output_file_name += '.html'
@@ -107,7 +124,8 @@ class SubRipConverter:
                       " (https://github.com/JazzCore/python-pdfkit/wiki/Installing-wkhtmltopdf)"
                 sys.exit(2)
         else:
-            output_file = open(self.working_directory + self.output_file_name, 'r+')
+            output_file = open(self.working_directory + self.output_file_name, 'a+')
+            output_file.seek(0)
             output_file.truncate()
             for line in content:
                 output_file.write(line)
@@ -182,10 +200,20 @@ def process_html(line_list, paragraph_size):
             body += '<p>' + os.linesep
             continue
 
-        if (line.endswith('project.')):
-            x = 1
-
         line = line.strip()
+
+        if line.startswith('>>'):
+            body += current_sentence
+            current_sentence += "<br \>" + "&gt;&gt; " + line[2:].strip()[0].upper() + line[2:].strip()[1:]
+            sentence_count = 1
+            if line.endswith(tuple(['.', '!', '?'])):
+                body += current_sentence
+                current_sentence = ''
+                sentence_count += 1
+                is_first = True
+            else:
+                is_first = False
+            continue
 
         if is_first:
             line = line[0].upper() + line[1:]

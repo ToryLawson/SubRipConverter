@@ -75,7 +75,7 @@ class SubRipConverter:
             line = line.strip()
 
             if is_first:
-                line = line.capitalize()
+                line = line[0].upper() + line[1:]
                 is_first = False
 
             current_sentence += ' ' + line
@@ -95,6 +95,7 @@ class SubRipConverter:
         if self.output_format == OutputFormats.HTML:
             if not self.output_file_name.endswith('.html'):
                 self.output_file_name += '.html'
+
         if self.output_format == OutputFormats.PDF:
             if not self.output_file_name.endswith('.pdf'):
                 self.output_file_name += '.pdf'
@@ -104,12 +105,13 @@ class SubRipConverter:
             except IOError:
                 print "Error creating PDF. Make sure you have wkhtmltopdf installed:" + \
                       " (https://github.com/JazzCore/python-pdfkit/wiki/Installing-wkhtmltopdf)"
-            sys.exit(2)
-
-        output_file = os.open(self.working_directory + self.output_file_name, os.O_CREAT | os.O_WRONLY)
-        for line in content:
-            os.write(output_file, line)
-        os.close(output_file)
+                sys.exit(2)
+        else:
+            output_file = open(self.working_directory + self.output_file_name, 'r+')
+            output_file.truncate()
+            for line in content:
+                output_file.write(line)
+            output_file.close()
 
     def main(self, *args):
         start_time = datetime.datetime.now()
@@ -119,8 +121,8 @@ class SubRipConverter:
 
         for opt, val in options:
             if opt == '-d':
-                if not val.endswith('/'):
-                    val += '/'
+                if not val.endswith(os.sep):
+                    val += os.sep
                 self.working_directory = val
                 options_flag += 1
             elif opt == '-f':
@@ -180,10 +182,13 @@ def process_html(line_list, paragraph_size):
             body += '<p>' + os.linesep
             continue
 
+        if (line.endswith('project.')):
+            x = 1
+
         line = line.strip()
 
         if is_first:
-            line = line.capitalize()
+            line = line[0].upper() + line[1:]
             is_first = False
 
         current_sentence += ' ' + line

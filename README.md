@@ -24,7 +24,7 @@ Converts a set of SubRip subtitle files (.srt files) into formatted output. Inte
 
 ## Tested Udacity courses
 
-This has been tested on and is known to work for these courses:
+This has been tested on / is known to work for these courses:
 
 * CS6250 (CN, Computer Networking) 
 * CS7646 (ML4T, Machine Learning for Trading)

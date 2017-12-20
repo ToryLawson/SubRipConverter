@@ -51,7 +51,7 @@ class SubRipConverter:
             curr_file = open(self.working_directory + file_name)
             for line in curr_file:
                 if is_text(line):
-                    content_lines.append(line.strip())
+                    content_lines.append(line.strip().decode('utf-8'))
         return content_lines
 
     @staticmethod

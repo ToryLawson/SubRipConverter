@@ -27,6 +27,7 @@ Converts a set of SubRip subtitle files (.srt files) into formatted output. Inte
 This has been tested on / is known to work for these courses:
 
 * CS6250 (CN, Computer Networking) 
+* CS7641 (ML, Machine Learning)
 * CS7646 (ML4T, Machine Learning for Trading)
 * CS8803-3 (IOS, Introduction to Operating Systems)
 * CS8803-8 (?, Compilers)

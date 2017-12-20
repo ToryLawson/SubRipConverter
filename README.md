@@ -36,5 +36,4 @@ If you verify it for other courses, please let me know so I can add to the list.
 
 ## Bugs, problems
 
-### A quick word 
 Please log any issues to the issues board, and especially let me know if the conversion doesn't work properly for a given course.

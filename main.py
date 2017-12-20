@@ -118,7 +118,7 @@ class SubRipConverter:
                 self.output_file_name += '.pdf'
 
             try:
-                pdfkit.from_string(content, output_path=self.output_file_name)
+                pdfkit.from_string(content, output_path=self.working_directory + self.output_file_name)
             except IOError:
                 print "Error creating PDF. Make sure you have wkhtmltopdf installed:" + \
                       " (https://github.com/JazzCore/python-pdfkit/wiki/Installing-wkhtmltopdf)"

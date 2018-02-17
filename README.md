@@ -4,7 +4,7 @@ Converts a set of SubRip subtitle files (.srt files) into formatted output. Inte
 ## Requirements
 
 * Python 2.7 (sorry, I'll fix it up for Python 3 over break)
-* [Wkhtmltopdf](https://wkhtmltopdf.org) for PDF generation 
+* [Wkhtmltopdf](https://wkhtmltopdf.org) for PDF generation
 * [PDFKit](https://pypi.python.org/pypi/pdfkit) for PDF generation
 * Some SRT files to convert
 
@@ -16,17 +16,19 @@ Converts a set of SubRip subtitle files (.srt files) into formatted output. Inte
 
 ## Options
 
-`-d <working directory>` Indicates the directory where SubRipConverter should look for .srt files. The default is the current directory. 
+`-d <working directory>` Indicates the directory where SubRipConverter should look for .srt files. The default is the current directory.
 
-`-f [txt|html|pdf]` Sets the output format to plaintext, HTML, or PDF, respectively. The default is txt. 
+`-f [txt|html|pdf]` Sets the output format to plaintext, HTML, or PDF, respectively. The default is txt.
 
-`-o <filename>` Sets the file name for the resulting output. This will be placed into the working directory. The default is "output." 
+`-o <filename>` Sets the file name for the resulting output. This will be placed into the working directory. The default is "output."
+
+`-l <language code>` Sets a value to use in the language filter. Requires that the files contain the string `lang_xx` where `xx` is the language code. Think en, es, ru, etc.
 
 ## Tested Udacity courses
 
 This has been tested on / is known to work for these courses:
 
-* CS6250 (CN, Computer Networking) 
+* CS6250 (CN, Computer Networking)
 * CS7641 (ML, Machine Learning)
 * CS7646 (ML4T, Machine Learning for Trading)
 * CS8803-3 (IOS, Introduction to Operating Systems)

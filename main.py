@@ -14,10 +14,14 @@ class SubRipConverter:
         self.output_format = OutputFormats.PLAINTEXT
         self.sentences_per_paragraph = 5
         self.output_file_name = 'output'
+        self.language = None
 
     def get_file_list(self):
         files = os.listdir(self.working_directory)
-        filtered_list = [f for f in files if f.endswith('.srt')]
+        if self.language is not None:
+            filtered_list = [f for f in files if f.endswith('.srt') and 'lang_' + self.language in f]
+        else:
+            filtered_list = [f for f in files if f.endswith('.srt')]
         return filtered_list
 
     @staticmethod
@@ -134,7 +138,7 @@ class SubRipConverter:
     def main(self, *args):
         start_time = datetime.datetime.now()
         import getopt
-        options, values = getopt.getopt(args, 'd:f:o:')
+        options, values = getopt.getopt(args, 'd:f:o:l:')
         options_flag = 0
 
         for opt, val in options:
@@ -149,6 +153,9 @@ class SubRipConverter:
             elif opt == '-o':
                 self.output_file_name = val
                 options_flag += 4
+            elif opt == '-l':
+                self.language = val
+                options_flag += 8
 
         if not options_flag & 1:
             print "Missing working directory option (-d <working directory>);"
@@ -159,6 +166,9 @@ class SubRipConverter:
         if not options_flag & 4:
             print "Missing output file name option (-o <name>);"
             print "  defaulting to 'output'"
+        if not options_flag & 8:
+            print "No language specified. If your output contains multiple languages," \
+                  " add a language filter (-l [en|fr|es|etc.])"
 
         file_list = self.get_file_list()
         file_list = self.sort_if_possible(file_list)

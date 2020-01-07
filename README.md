@@ -33,6 +33,7 @@ This has been tested on / is known to work for these courses:
 * CS7646 (ML4T, Machine Learning for Trading)
 * CS8803-3 (IOS, Introduction to Operating Systems)
 * CS8803-8 (?, Compilers)
+* CSE6250 (BD4H, Big Data for Health Informatics)
 
 If you verify it for other courses, please let me know so I can add to the list.
 
